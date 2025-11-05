@@ -24,11 +24,7 @@ const Login = () => {
             toast.error(data.message)
           }
         } catch (error) {
-          const errorMessage =
-            error.response?.data?.message ||
-            (typeof error.response?.data === 'string' && error.response.data) ||
-            error.message;
-          toast.error(errorMessage || 'An unknown error occurred.');
+          toast.error(error.response?.data?.message || error.message);
         }
     }
 

@@ -24,9 +24,7 @@ const ListBlog = () => {
         toast.error(data.message);
       }
     } catch (error) {
-      toast.error(
-        errorMessage || "An unknown error occurred while fetching blogs."
-      );
+      toast.error(error.message);
     }
   };
 

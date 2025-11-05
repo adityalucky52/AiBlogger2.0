@@ -30,14 +30,10 @@ const AddBlog = () => {
             if (data.success){
                 quillRef.current.root.innerHTML = parse(data.content)
             } else {
-                toast.error( errorMessage || "Failed to generate content.");
+                toast.error("Failed to generate content");
             }
         } catch (error) {
-            const errorMessage =
-              error.response?.data?.message ||
-              (typeof error.response?.data === 'string' && error.response.data) ||
-              error.message;
-            toast.error(errorMessage || 'An unknown error occurred while generating content.');
+            toast.error(error.response?.data?.message || error.message);
         }finally{
             setLoading(false)
         }
@@ -69,14 +65,10 @@ const AddBlog = () => {
                 setCategory('Startup')
 
             } else {
-                toast.error("An error occurred while adding the blog.");
+                toast.error("Failed to add blog");
             }
         } catch (error) {
-            const errorMessage =
-              error.response?.data?.message ||
-              (typeof error.response?.data === 'string' && error.response.data) ||
-              error.message;
-            toast.error(errorMessage || 'An unknown error occurred.');
+            toast.error(error.response?.data?.message || error.message);
         }finally{
             setIsAdding(false)
         }
