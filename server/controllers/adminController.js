@@ -63,7 +63,7 @@ export const deleteCommentById = async (req, res) =>{
         await Comment.findByIdAndDelete(id);
         res.json({success: true, message:"Comment deleted successfully" })
     } catch (error) {
-       res.json({success: false, message: error.message}) 
+       res.status(500).json({success: false, message: error.message}) 
     }
 }
 
@@ -73,6 +73,6 @@ export const approveCommentById = async (req, res) =>{
         await Comment.findByIdAndUpdate(id, {isApproved: true});
         res.json({success: true, message:"Comment approved successfully" })
     } catch (error) {
-       res.json({success: false, message: error.message}) 
+       res.status(500).json({success: false, message: error.message}) 
     }
 }

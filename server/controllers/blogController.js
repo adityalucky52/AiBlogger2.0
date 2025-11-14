@@ -2,7 +2,7 @@ import fs from "fs/promises";
 import imagekit from "../configs/imageKit.js";
 import Blog from "../models/Blog.js";
 import Comment from "../models/Comment.js";
-// import main from '../configs/gemini.js';
+import main from '../configs/gemini.js';
 
 export const addBlog = async (req, res) => {
   try {
@@ -78,14 +78,10 @@ export const addBlog = async (req, res) => {
 
     res.json({ success: true, message: "Blog added successfully" });
   } catch (error) {
-    console.error("Error in addBlog:", error); // normal log
-    console.error("Error keys:", Object.keys(error)); // show available keys
-    console.error("Error JSON:", JSON.stringify(error, null, 2)); // stringify full object
-
+    console.error("Error in addBlog:", error);
     res.status(500).json({
       success: false,
-      message: "Server Error while adding blog",
-      error: error.message || error, // fallback if no message
+      message: error.message
     });
   }
 };
@@ -95,7 +91,7 @@ export const getAllBlogs = async (req, res) => {
     const blogs = await Blog.find({ isPublished: true });
     res.json({ success: true, blogs });
   } catch (error) {
-    res.json({ success: false, message: error.message });
+    res.status(500).json({ success: false, message: error.message });
   }
 };
 
@@ -108,7 +104,7 @@ export const getBlogById = async (req, res) => {
     }
     res.json({ success: true, blog });
   } catch (error) {
-    res.json({ success: false, message: error.message });
+    res.status(500).json({ success: false, message: error.message });
   }
 };
 
@@ -122,7 +118,7 @@ export const deleteBlogById = async (req, res) => {
 
     res.json({ success: true, message: "Blog deleted successfully" });
   } catch (error) {
-    res.json({ success: false, message: error.message });
+    res.status(500).json({ success: false, message: error.message });
   }
 };
 
@@ -134,7 +130,7 @@ export const togglePublish = async (req, res) => {
     await blog.save();
     res.json({ success: true, message: "Blog status updated" });
   } catch (error) {
-    res.json({ success: false, message: error.message });
+    res.status(500).json({ success: false, message: error.message });
   }
 };
 
@@ -144,7 +140,7 @@ export const addComment = async (req, res) => {
     await Comment.create({ blog, name, content });
     res.json({ success: true, message: "Comment added for review" });
   } catch (error) {
-    res.json({ success: false, message: error.message });
+    res.status(500).json({ success: false, message: error.message });
   }
 };
 
@@ -157,18 +153,30 @@ export const getBlogComments = async (req, res) => {
     }).sort({ createdAt: -1 });
     res.json({ success: true, comments });
   } catch (error) {
-    res.json({ success: false, message: error.message });
+    res.status(500).json({ success: false, message: error.message });
   }
 };
 
 export const generateContent = async (req, res) => {
   try {
     const { prompt } = req.body;
-    const content = await main(
-      prompt + " Generate a blog content for this topic in simple text format"
-    );
-    res.json({ success: true, content });
+    console.log(prompt)
+
+    if (!prompt || typeof prompt !== 'string' || !prompt.trim()) {
+      return res.status(400).json({ success: false, message: 'Prompt is required' });
+    }
+
+    // Provide a clear instruction to the model. Return plain text/markdown suitable for client parsing.
+    const instruction = `${prompt.trim()}\n\nPlease generate a detailed blog post about the above topic in simple language. Return the result as plain text or markdown (no surrounding JSON).`;
+
+    const content = await main(instruction);
+
+    // Ensure we return a string
+    const resultText = (typeof content === 'string' ? content : (content?.toString?.() || '')) .trim();
+
+    res.json({ success: true, content: resultText });
   } catch (error) {
-    res.json({ success: false, message: error.message });
+    console.error('Error in generateContent:', error);
+    res.status(500).json({ success: false, message: error.message });
   }
 };
