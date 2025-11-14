@@ -1,0 +1,675 @@
+==========================================
+  AIBLOGGER 2.0 - MERMAID DIAGRAMS
+==========================================
+
+Copy and paste these into https://mermaid.live to visualize them!
+
+==========================================
+1. COMPLETE USER FLOW
+==========================================
+
+graph TD
+    Start[User Visits AiBlogger]
+    Start --> UserType{User Type?}
+    
+    UserType -->|Visitor| Public[Public Pages]
+    UserType -->|Admin| CheckLogin{Logged In?}
+    
+    CheckLogin -->|No| LoginPage[Login Page]AiBlogger 2.0 - Flowchart Documentation
+This document contains comprehensive flowcharts for the AiBlogger application architecture and workflows.
+
+1. User Flow Diagram
+Complete user journey showing both visitor and admin paths through the application.
+
+No diagram type detected matching given configuration for text: 
+2. System Architecture Flowchart
+Complete system overview showing all components and their connections.
+
+No diagram type detected matching given configuration for text: 
+3. Create Blog Flow
+Detailed step-by-step process for creating a blog post with AI generation.
+
+No diagram type detected matching given configuration for text: 
+4. Comment Moderation Flow
+How comments are submitted by visitors and moderated by admins.
+
+No diagram type detected matching given configuration for text: 
+5. API Request Flow
+How HTTP requests flow through the backend system.
+
+No diagram type detected matching given configuration for text: 
+6. Authentication Flow
+JWT token-based authentication system for admin access.
+
+No diagram type detected matching given configuration for text: 
+7. Data Flow Sequence Diagram
+Complete sequence of interactions between components.
+
+No diagram type detected matching given configuration for text: 
+Technology Stack
+Frontend
+React - UI Library
+Vite - Build Tool
+React Router - Navigation
+Quill - Rich Text Editor
+React Hot Toast - Notifications
+Marked - Markdown Parser
+Backend
+Express - Web Framework
+MongoDB - Database
+Mongoose - ODM
+JWT - Authentication
+Multer - File Upload
+CORS - Cross-Origin Support
+External Services
+Google Gemini AI - AI Content Generation
+ImageKit - CDN & Image Optimization
+API Endpoints
+Blog Routes (/api/blog)
+POST /add - Create new blog (Protected)
+GET /all - Get all published blogs (Public)
+GET /:blogId - Get single blog (Public)
+POST /delete - Delete blog (Protected)
+POST /toggle-publish - Toggle publish status (Protected)
+POST /add-comment - Add comment (Public)
+POST /comments - Get approved comments (Public)
+POST /generate - Generate content with AI (Protected)
+Admin Routes (/api/admin)
+POST /login - Admin login (Public)
+GET /comments - Get all comments (Protected)
+GET /blogs - Get all blogs (Protected)
+POST /delete-comment - Delete comment (Protected)
+POST /approve-comment - Approve comment (Protected)
+GET /dashboard - Get dashboard stats (Protected)
+Database Schema
+Blog Collection
+{
+  title: String,
+  subTitle: String,
+  description: String (HTML),
+  category: String,
+  image: String (CDN URL),
+  isPublished: Boolean,
+  createdAt: Date
+}
+Comment Collection
+{
+  blog: ObjectId (ref: Blog),
+  name: String,
+  content: String,
+  isApproved: Boolean,
+  createdAt: Date
+}
+How to View These Diagrams
+GitHub/GitLab - These platforms render Mermaid diagrams automatically
+VS Code - Install "Markdown Preview Mermaid Support" extension
+Online - Visit mermaid.live and paste the code
+Other Tools - Any Markdown viewer with Mermaid support
+Project Structure
+AiBlogger2.0/
+├── client/                 # React Frontend
+│   ├── src/
+│   │   ├── components/    # Reusable components
+│   │   ├── pages/         # Page components
+│   │   ├── context/       # Context API
+│   │   └── assets/        # Static assets
+│   └── package.json
+│
+└── server/                # Express Backend
+    ├── controllers/       # Business logic
+    ├── models/           # MongoDB schemas
+    ├── routes/           # API routes
+    ├── middleware/       # Auth & file upload
+    ├── configs/          # DB, Gemini, ImageKit
+    └── package.json
+Created for AiBlogger 2.0 - A modern blog platform with AI-powered content generation
+    LoginPage --> EnterCreds[Enter Email & Password]
+    EnterCreds --> VerifyCreds{Valid Credentials?}
+    VerifyCreds -->|No| LoginError[Show Error]
+    LoginError --> LoginPage
+    VerifyCreds -->|Yes| GenerateToken[Generate JWT Token]
+    GenerateToken --> AdminPanel[Admin Dashboard]
+    
+    CheckLogin -->|Yes| AdminPanel
+    
+    Public --> BrowseBlogs[Browse Blog List]
+    BrowseBlogs --> SelectBlog[Click on Blog]
+    SelectBlog --> ViewBlog[View Blog Details]
+    ViewBlog --> ReadContent[Read Blog Content]
+    ReadContent --> ViewComments[View Comments]
+    ViewComments --> DecideComment{Add Comment?}
+    DecideComment -->|Yes| WriteComment[Write Comment]
+    WriteComment --> SubmitComment[Submit Comment]
+    SubmitComment --> SaveComment[Save to DB - Not Approved]
+    SaveComment --> ShowMessage[Comment Awaiting Approval]
+    DecideComment -->|No| End1[End]
+    
+    AdminPanel --> AdminAction{Choose Action}
+    AdminAction -->|Dashboard| ViewStats[View Statistics]
+    AdminAction -->|Create Blog| CreateBlog[Create New Blog]
+    AdminAction -->|Manage Blogs| ListBlogs[List All Blogs]
+    AdminAction -->|Comments| ManageComments[Manage Comments]
+    
+    CreateBlog --> UploadImg[Upload Thumbnail]
+    UploadImg --> EnterTitle[Enter Title]
+    EnterTitle --> EnterSubtitle[Enter Subtitle]
+    EnterSubtitle --> ChooseCategory[Choose Category]
+    ChooseCategory --> ContentMethod{Content Method?}
+    
+    ContentMethod -->|Manual| ManualWrite[Write in Editor]
+    ContentMethod -->|AI Generate| CheckTitle{Title Filled?}
+    CheckTitle -->|No| TitleError[Show Error]
+    TitleError --> EnterTitle
+    CheckTitle -->|Yes| CallGemini[Call Gemini API]
+    CallGemini --> GeminiProcess[AI Generates Content]
+    GeminiProcess --> ParseMarkdown[Parse to HTML]
+    ParseMarkdown --> FillEditor[Fill Quill Editor]
+    
+    ManualWrite --> ReviewContent[Review Content]
+    FillEditor --> ReviewContent
+    ReviewContent --> PublishDecision{Publish Now?}
+    PublishDecision -->|Yes| SetPublish[isPublished = true]
+    PublishDecision -->|No| SetDraft[isPublished = false]
+    SetPublish --> SubmitBlog[Submit Blog Form]
+    SetDraft --> SubmitBlog
+    SubmitBlog --> UploadToImageKit[Upload Image to ImageKit]
+    UploadToImageKit --> OptimizeImage[Optimize Image]
+    OptimizeImage --> GetCDNUrl[Get CDN URL]
+    GetCDNUrl --> SaveBlogDB[Save Blog to MongoDB]
+    SaveBlogDB --> Success1[Show Success Message]
+    Success1 --> AdminPanel
+    
+    ListBlogs --> ShowAllBlogs[Display All Blogs]
+    ShowAllBlogs --> BlogAction{Action?}
+    BlogAction -->|Toggle Status| TogglePublish[Toggle isPublished]
+    BlogAction -->|Delete| ConfirmDelete{Confirm Delete?}
+    ConfirmDelete -->|Yes| DeleteBlog[Delete Blog & Comments]
+    ConfirmDelete -->|No| ShowAllBlogs
+    TogglePublish --> UpdateDB1[Update MongoDB]
+    DeleteBlog --> UpdateDB1
+    UpdateDB1 --> ShowAllBlogs
+    
+    ManageComments --> FilterComments{Filter}
+    FilterComments -->|Not Approved| ShowPending[Show Pending]
+    FilterComments -->|Approved| ShowApproved[Show Approved]
+    ShowPending --> CommentAction{Action?}
+    CommentAction -->|Approve| ApproveComment[Set isApproved = true]
+    CommentAction -->|Delete| DeleteComment[Delete from DB]
+    ApproveComment --> UpdateDB2[Update MongoDB]
+    DeleteComment --> UpdateDB2
+    UpdateDB2 --> ManageComments
+    
+    ViewStats --> FetchData[Fetch Blog & Comment Count]
+    FetchData --> ShowDashboard[Display Dashboard]
+    ShowDashboard --> AdminPanel
+
+==========================================
+2. SYSTEM ARCHITECTURE
+==========================================
+
+graph TB
+    subgraph Client["CLIENT (React + Vite)"]
+        User[User/Admin]
+        Home[Home Page]
+        BlogPage[Blog Details Page]
+        AdminDash[Admin Dashboard]
+        AddBlogPage[Add Blog Page]
+        ListBlogPage[List Blogs Page]
+        CommentsPage[Comments Page]
+    end
+    
+    subgraph Server["SERVER (Express + Node.js)"]
+        ExpressApp[Express Application]
+        BlogRoutes[Blog Routes]
+        AdminRoutes[Admin Routes]
+        AuthMiddleware[JWT Auth Middleware]
+        MulterMiddleware[Multer File Upload]
+        BlogController[Blog Controller]
+        AdminController[Admin Controller]
+    end
+    
+    subgraph Database["DATABASE"]
+        MongoDB[(MongoDB Atlas)]
+        BlogCollection[Blog Collection]
+        CommentCollection[Comment Collection]
+    end
+    
+    subgraph External["EXTERNAL SERVICES"]
+        ImageKit[ImageKit CDN]
+        GeminiAI[Google Gemini AI]
+    end
+    
+    User --> Home
+    User --> BlogPage
+    User --> AdminDash
+    
+    Home --> BlogRoutes
+    BlogPage --> BlogRoutes
+    AdminDash --> AdminRoutes
+    AddBlogPage --> BlogRoutes
+    ListBlogPage --> AdminRoutes
+    CommentsPage --> AdminRoutes
+    
+    BlogRoutes --> AuthMiddleware
+    BlogRoutes --> MulterMiddleware
+    AdminRoutes --> AuthMiddleware
+    
+    AuthMiddleware --> BlogController
+    AuthMiddleware --> AdminController
+    MulterMiddleware --> BlogController
+    
+    BlogController --> MongoDB
+    AdminController --> MongoDB
+    BlogController --> ImageKit
+    BlogController --> GeminiAI
+    
+    MongoDB --> BlogCollection
+    MongoDB --> CommentCollection
+
+==========================================
+3. CREATE BLOG WITH AI FLOW
+==========================================
+
+graph LR
+    A[Admin Logs In] --> B[Dashboard]
+    B --> C[Click Add Blog Button]
+    C --> D[Add Blog Form]
+    D --> E[Upload Thumbnail Image]
+    E --> F[Enter Blog Title]
+    F --> G[Enter Subtitle]
+    G --> H[Select Category]
+    H --> I{Generate Content?}
+    
+    I -->|No - Manual| J[Write in Quill Editor]
+    I -->|Yes - AI| K[Click Generate with AI]
+    
+    K --> L{Title Present?}
+    L -->|No| M[Show Error Message]
+    M --> F
+    
+    L -->|Yes| N[Send POST /api/blog/generate]
+    N --> O[Server Receives Prompt]
+    O --> P[Call Gemini AI API]
+    P --> Q[Gemini Generates Blog Content]
+    Q --> R[Return Markdown Text]
+    R --> S[Parse Markdown to HTML]
+    S --> T[Fill Quill Editor]
+    
+    J --> U[Review Content]
+    T --> U
+    
+    U --> V[Check Publish Now Checkbox]
+    V --> W[Click Add Blog Button]
+    W --> X[Create FormData]
+    X --> Y[Append Image & Blog Data]
+    Y --> Z[POST /api/blog/add]
+    Z --> AA[Multer Processes Image]
+    AA --> AB[Read File Buffer]
+    AB --> AC[Upload to ImageKit]
+    AC --> AD[Image Optimization]
+    AD --> AE[Convert to WebP]
+    AE --> AF[Get Optimized CDN URL]
+    AF --> AG[Create Blog Document]
+    AG --> AH[Save to MongoDB]
+    AH --> AI[Return Success Response]
+    AI --> AJ[Show Success Toast]
+    AJ --> AK[Reset Form]
+    AK --> B
+
+==========================================
+4. COMMENT MODERATION FLOW
+==========================================
+
+graph TD
+    V1[Visitor Reads Blog] --> V2[Scroll to Comment Section]
+    V2 --> V3[Fill Comment Form]
+    V3 --> V4[Enter Name]
+    V4 --> V5[Enter Comment Text]
+    V5 --> V6[Click Submit]
+    V6 --> V7[POST /api/blog/add-comment]
+    V7 --> V8[Server Receives Data]
+    V8 --> V9[Create Comment Document]
+    V9 --> V10[Set isApproved = false]
+    V10 --> V11[Save to MongoDB]
+    V11 --> V12[Return Success Response]
+    V12 --> V13[Show Success Toast]
+    V13 --> V14[Comment Awaiting Approval]
+    
+    A1[Admin Logs In] --> A2[Navigate to Comments Page]
+    A2 --> A3[GET /api/admin/comments]
+    A3 --> A4[Fetch All Comments from DB]
+    A4 --> A5[Display Comments List]
+    A5 --> A6{Filter Comments}
+    
+    A6 -->|Not Approved| A7[Show Pending Comments]
+    A6 -->|Approved| A8[Show Approved Comments]
+    
+    A7 --> A9{Admin Action}
+    A9 -->|Approve| A10[Click Approve Icon]
+    A9 -->|Delete| A11[Click Delete Icon]
+    
+    A10 --> A12[POST /api/admin/approve-comment]
+    A12 --> A13[Find Comment by ID]
+    A13 --> A14[Update isApproved = true]
+    A14 --> A15[Save to MongoDB]
+    A15 --> A16[Return Success]
+    A16 --> A17[Refresh Comments List]
+    A17 --> A18[Comment Now Public]
+    
+    A11 --> A19[Confirm Delete Dialog]
+    A19 --> A20{Confirm?}
+    A20 -->|Yes| A21[POST /api/admin/delete-comment]
+    A20 -->|No| A5
+    A21 --> A22[Find Comment by ID]
+    A22 --> A23[Delete from MongoDB]
+    A23 --> A24[Return Success]
+    A24 --> A17
+
+==========================================
+5. AUTHENTICATION FLOW
+==========================================
+
+graph TD
+    S1[User Visits /admin Route] --> S2{Token in LocalStorage?}
+    
+    S2 -->|No| S3[Render Login Component]
+    S2 -->|Yes| S4[Set Token in Context]
+    S4 --> S5[Set Authorization Header]
+    S5 --> S6[Render Admin Layout]
+    
+    S3 --> S7[Show Login Form]
+    S7 --> S8[User Enters Email]
+    S8 --> S9[User Enters Password]
+    S9 --> S10[Click Login Button]
+    S10 --> S11[POST /api/admin/login]
+    S11 --> S12[Server Receives Credentials]
+    S12 --> S13{Match ADMIN_EMAIL?}
+    
+    S13 -->|No| S14[Return Error Response]
+    S14 --> S15[Show Error Toast]
+    S15 --> S7
+    
+    S13 -->|Yes| S16{Match ADMIN_PASSWORD?}
+    S16 -->|No| S14
+    
+    S16 -->|Yes| S17[Generate JWT Token]
+    S17 --> S18[Sign with JWT_SECRET]
+    S18 --> S19[Set Expiry 1 day]
+    S19 --> S20[Return Token to Client]
+    S20 --> S21[Store Token in LocalStorage]
+    S21 --> S22[Set Token in Context]
+    S22 --> S23[Set Authorization Header]
+    S23 --> S24[Render Admin Dashboard]
+    
+    S24 --> S25{User Makes API Call}
+    S25 --> S26[Include Bearer Token in Header]
+    S26 --> S27[Server Receives Request]
+    S27 --> S28[Auth Middleware Checks Token]
+    S28 --> S29{Token Valid?}
+    
+    S29 -->|No| S30[Return 401 Unauthorized]
+    S30 --> S31[Clear LocalStorage]
+    S31 --> S32[Redirect to Login]
+    
+    S29 -->|Yes| S33[Decode Token Payload]
+    S33 --> S34[Verify Signature]
+    S34 --> S35[Allow Access to Route]
+    S35 --> S36[Process Request]
+    S36 --> S37[Return Response]
+    
+    S24 --> S38{User Clicks Logout?}
+    S38 -->|Yes| S39[Clear LocalStorage]
+    S39 --> S40[Clear Token from Context]
+    S40 --> S3
+
+==========================================
+6. API REQUEST FLOW
+==========================================
+
+graph LR
+    C1[React Client] --> C2[Axios Request]
+    C2 --> C3[HTTP Method & URL]
+    C3 --> C4[Request Headers]
+    C4 --> C5[Request Body/Params]
+    C5 --> C6[Send to Server]
+    
+    C6 --> S1[Express Server]
+    S1 --> S2[CORS Middleware]
+    S2 --> S3[JSON Parser]
+    S3 --> S4[Router Matching]
+    S4 --> S5{Route Type?}
+    
+    S5 -->|Public| S6[Public Routes]
+    S5 -->|Protected| S7[Auth Middleware]
+    
+    S6 --> S10[Controller Function]
+    
+    S7 --> S8{Valid JWT?}
+    S8 -->|No| S9[Return 401 Error]
+    S9 --> R1[Error Response]
+    S8 -->|Yes| S10
+    
+    S10 --> S11{File Upload?}
+    S11 -->|Yes| S12[Multer Middleware]
+    S11 -->|No| S13[Process Request]
+    
+    S12 --> S13
+    S13 --> S14{Database Query?}
+    S14 -->|Yes| S15[MongoDB Operation]
+    S14 -->|No| S16[Other Logic]
+    
+    S15 --> S17{External Service?}
+    S16 --> S17
+    
+    S17 -->|ImageKit| S18[Upload to CDN]
+    S17 -->|Gemini| S19[AI Generation]
+    S17 -->|None| S20[Continue]
+    
+    S18 --> S20
+    S19 --> S20
+    S20 --> S21{Success?}
+    
+    S21 -->|Yes| S22[Return 200 OK]
+    S21 -->|No| S23[Return 500 Error]
+    
+    S22 --> R2[Success Response]
+    S23 --> R1
+    
+    R1 --> C7[Client Receives Response]
+    R2 --> C7
+    C7 --> C8{Success?}
+    C8 -->|Yes| C9[Update UI]
+    C8 -->|No| C10[Show Error Toast]
+    C9 --> C11[End]
+    C10 --> C11
+
+==========================================
+7. DATABASE SCHEMA STRUCTURE
+==========================================
+
+graph TD
+    DB[(MongoDB Database - AiBlogger)]
+    
+    DB --> BC[Blog Collection]
+    DB --> CC[Comment Collection]
+    
+    BC --> B1[Document Structure]
+    B1 --> B2[_id: ObjectId]
+    B1 --> B3[title: String]
+    B1 --> B4[subTitle: String]
+    B1 --> B5[description: String HTML]
+    B1 --> B6[category: String]
+    B1 --> B7[image: String CDN URL]
+    B1 --> B8[isPublished: Boolean]
+    B1 --> B9[createdAt: Date]
+    B1 --> B10[updatedAt: Date]
+    
+    CC --> C1[Document Structure]
+    C1 --> C2[_id: ObjectId]
+    C1 --> C3[blog: ObjectId ref Blog]
+    C1 --> C4[name: String]
+    C1 --> C5[content: String]
+    C1 --> C6[isApproved: Boolean]
+    C1 --> C7[createdAt: Date]
+    C1 --> C8[updatedAt: Date]
+    
+    B2 --> I1[Indexes]
+    I1 --> I2[Primary: _id]
+    I1 --> I3[Index: isPublished]
+    I1 --> I4[Index: createdAt]
+    
+    C2 --> I5[Indexes]
+    I5 --> I6[Primary: _id]
+    I5 --> I7[Index: blog]
+    I5 --> I8[Index: isApproved]
+
+==========================================
+8. BLOG LISTING & DISPLAY FLOW
+==========================================
+
+graph LR
+    V1[Visitor Opens Homepage] --> V2[Component Mounts]
+    V2 --> V3[useEffect Triggered]
+    V3 --> V4[GET /api/blog/all]
+    V4 --> S1[Server Receives Request]
+    S1 --> S2[Blog Controller - getAllBlogs]
+    S2 --> S3[Query MongoDB]
+    S3 --> S4[Find isPublished = true]
+    S4 --> S5[Sort by createdAt DESC]
+    S5 --> S6[Return Blog Array]
+    S6 --> V5[Client Receives Data]
+    V5 --> V6[Map Through Blogs]
+    V6 --> V7[Render BlogCard Components]
+    V7 --> V8[Display Thumbnail]
+    V7 --> V9[Display Title]
+    V7 --> V10[Display Subtitle]
+    V7 --> V11[Display Category]
+    V7 --> V12[Display Date]
+    
+    V8 --> V13[User Clicks Blog Card]
+    V13 --> V14[Navigate to /blog/:id]
+    V14 --> V15[Blog Component Mounts]
+    V15 --> V16[Extract ID from Params]
+    V16 --> V17[GET /api/blog/:blogId]
+    V17 --> S7[Server Receives Request]
+    S7 --> S8[Blog Controller - getBlogById]
+    S8 --> S9[Query MongoDB by ID]
+    S9 --> S10{Blog Found?}
+    S10 -->|No| S11[Return 404 Error]
+    S10 -->|Yes| S12[Return Blog Object]
+    S11 --> V18[Show Error Message]
+    S12 --> V19[Set Blog State]
+    V19 --> V20[Render Blog Content]
+    V20 --> V21[Display Full Blog]
+    V21 --> V22[Fetch Comments]
+    V22 --> V23[POST /api/blog/comments]
+    V23 --> S13[Query Comments]
+    S13 --> S14[Find by blog ID]
+    S14 --> S15[Filter isApproved = true]
+    S15 --> S16[Sort by createdAt]
+    S16 --> V24[Display Comments]
+
+==========================================
+9. IMAGE UPLOAD & OPTIMIZATION FLOW
+==========================================
+
+graph TD
+    U1[User Selects Image File] --> U2[File Input onChange]
+    U2 --> U3[Store File in State]
+    U3 --> U4[Display Preview]
+    U4 --> U5[User Submits Form]
+    U5 --> U6[Create FormData Object]
+    U6 --> U7[Append Image File]
+    U7 --> U8[Append Blog JSON String]
+    U8 --> U9[POST /api/blog/add]
+    U9 --> S1[Server Receives Request]
+    S1 --> S2[Multer Middleware Processes]
+    S2 --> S3[Save File Temporarily]
+    S3 --> S4[File Stored in req.file]
+    S4 --> S5[Controller Receives req.file]
+    S5 --> S6[Read File Path]
+    S6 --> S7[fs.readFile Buffer]
+    S7 --> S8[Get File Buffer]
+    S8 --> S9[ImageKit Upload Config]
+    S9 --> S10[Set fileName]
+    S9 --> S11[Set folder /blogs]
+    S9 --> S12[Pass file buffer]
+    S12 --> S13[Call imagekit.upload]
+    S13 --> I1[ImageKit Receives File]
+    I1 --> I2[Upload to CDN]
+    I2 --> I3[Store Original]
+    I3 --> I4[Generate File Path]
+    I4 --> I5[Return Upload Response]
+    I5 --> S14[Receive ImageKit Response]
+    S14 --> S15[Extract filePath]
+    S15 --> S16[imagekit.url Transformation]
+    S16 --> S17[Apply quality auto]
+    S17 --> S18[Apply format webp]
+    S18 --> S19[Apply width 1280]
+    S19 --> S20[Generate Optimized URL]
+    S20 --> S21[Store URL in Blog Document]
+    S21 --> S22[Save to MongoDB]
+    S22 --> S23[Return Success Response]
+    S23 --> U10[Display Success Message]
+
+==========================================
+10. GEMINI AI CONTENT GENERATION
+==========================================
+
+graph LR
+    U1[User Enters Blog Title] --> U2[User Clicks Generate with AI]
+    U2 --> C1[Check Title Field]
+    C1 --> C2{Title Empty?}
+    C2 -->|Yes| C3[Show Error Toast]
+    C3 --> U1
+    C2 -->|No| C4[Set Loading State]
+    C4 --> C5[POST /api/blog/generate]
+    C5 --> C6[Send title as prompt]
+    C6 --> S1[Server Receives Request]
+    S1 --> S2[Auth Middleware Verifies Token]
+    S2 --> S3[Controller Receives Prompt]
+    S3 --> S4[Validate Prompt]
+    S4 --> S5{Valid?}
+    S5 -->|No| S6[Return 400 Error]
+    S6 --> C7[Show Error Toast]
+    S5 -->|Yes| S7[Create AI Instruction]
+    S7 --> S8[Append Generation Guidelines]
+    S8 --> S9[Call Gemini Config main]
+    S9 --> G1[Initialize GoogleGenAI]
+    G1 --> G2[Use GEMINI_API_KEY]
+    G2 --> G3[Select Model gemini-2.0-flash]
+    G3 --> G4[Call generateContent]
+    G4 --> G5[Send Prompt to Gemini API]
+    G5 --> G6[Gemini Processes Request]
+    G6 --> G7[AI Generates Blog Content]
+    G7 --> G8[Return Text Response]
+    G8 --> S10[Receive Generated Content]
+    S10 --> S11[Extract Text]
+    S11 --> S12[Trim Content]
+    S12 --> S13[Return to Client]
+    S13 --> C8[Client Receives Content]
+    C8 --> C9[Parse with marked Library]
+    C9 --> C10[Convert Markdown to HTML]
+    C10 --> C11[Set Quill Editor HTML]
+    C11 --> C12[Display in Editor]
+    C12 --> C13[Stop Loading State]
+    C13 --> U3[User Reviews Content]
+    U3 --> U4[User Can Edit Further]
+
+==========================================
+END OF MERMAID DIAGRAMS
+==========================================
+
+USAGE INSTRUCTIONS:
+1. Copy any diagram code above
+2. Visit https://mermaid.live/
+3. Paste the code in the editor
+4. See the rendered diagram instantly!
+
+You can also use these in:
+- GitHub/GitLab markdown files
+- VS Code with Mermaid preview
+- Documentation tools supporting Mermaid
+- Confluence, Notion, etc.
+
+==========================================

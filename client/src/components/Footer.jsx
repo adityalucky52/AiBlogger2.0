@@ -11,6 +11,7 @@ const Footer = () => {
             className="text-2xl sm:text-3xl font-bold bg-gradient-to-r bg-blue-600  bg-clip-text text-transparent cursor-pointer "
           >
             AiBlogger
+            
           </h1>
           <p className="max-w-[410px] mt-6">
             Tired of staring at a blank page? Our AI-powered blog generator
